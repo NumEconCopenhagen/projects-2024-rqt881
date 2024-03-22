@@ -1,9 +1,7 @@
-# \[Group name\]
+# \[rqt881\]
 
 **Group members:**
-- A
-- B
-- C
+- Louise Legart
 
 This repository contains  
 1. Inaugural project. 
