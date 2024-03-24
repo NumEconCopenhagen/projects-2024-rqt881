@@ -126,6 +126,11 @@ class ExchangeEconomyClass:
   
 
     def find_optimal_allocation(self):
+        """
+        This method finds the optimal allocation of goods x1 and x2 between agents A and B to maximize agent A's utility,
+        subject to the constraint that agent B's utility is not less than what they would have with their initial endowments.
+        """
+   
         # Objective function: We want to maximize agent A's utility (thus, we minimize the negative of it)
         obj = lambda x: -self.utility_A(x[0], x[1])
         
