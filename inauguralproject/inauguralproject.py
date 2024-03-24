@@ -193,7 +193,7 @@ class ExchangeEconomyClass:
     
     def walras(self, p1, eps=1e-8, maxiter=500):
         """
-        Returns the market clearing price based on the lowest market error. takes p1 as argument.
+        Returns the market clearing price based on the lowest market error, taking p1 as an argument.
         """
         t = 0
         while True:
@@ -201,22 +201,17 @@ class ExchangeEconomyClass:
             # i. excess demand
             excess = self.check_market_clearing(p1)
 
-            # ii: ensures that the break conditions hold, i.e. that the excess demand for good 1 is not smaller then epsilon
+            # ii. checks break conditions, i.e., that the excess demand for good 1 is not smaller than epsilon
             # and that the number of iterations (t) isn't higher than 500 
             if np.abs(excess[0]) < eps or t >= maxiter:
-                print(f'{t:3d}: p1 = {p1:12.8f} -> excess demand -> {excess[0]:14.8f}')
+                # Print only the final outcome
+                print(f'Final: p1 = {p1:12.8f} -> excess demand = {excess[0]:14.8f}')
                 break
 
             # iii. updates p1
             p1 += excess[0]
 
-            # iv. return and a lot of formatting for printing
-            if t < 5 or t % 25 == 0:
-                print(f'{t:3d}: p1 = {p1:12.8f} -> excess demand -> {excess[0]:14.8f}')
-            elif t == 5:
-                print('   ...')
-
-            # v. update t (interation counter)
+            # v. update t (iteration counter)
             t += 1
 
         return p1
