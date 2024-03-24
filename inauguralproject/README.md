@@ -1,7 +1,5 @@
 # Inaugural project
 
-**Students:** Louise Legart
-
 **Overview:**
 
 This project explores an exchange economy model featuring two consumers, A and B, and two goods. Through eight questions, we investigate utility maximization, resource allocation, and pricing mechanisms under different market scenarios.
