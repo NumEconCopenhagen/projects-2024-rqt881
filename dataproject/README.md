@@ -1,14 +1,13 @@
-# Data analysis project
+# Data Analysis Project
 
-Our project is titled **PROJECT TITLE** and is about EXPLAIN.
+This project, entitled **"Efficient Portfolios and Estimation Uncertainty,"** delves into the intricacies of constructing efficient portfolios under conditions of estimation uncertainty. By employing simulations we examine how different sample sizes can influence the accuracy and stability of the efficient frontier.
 
-The **results** of the project can be seen from running [dataproject.ipynb](dataproject.ipynb).
+The **results** and detailed analyses of this study are accessible through the Jupyter Notebook [dataproject.ipynb](dataproject.ipynb).
 
-We apply the **following datasets**:
+Data for this project is sourced via the Yahoo Finance API.
 
-1. dataX.csv (*source*) 
-1. dataY.csv (*source*)
+**Dependencies:** Beyond the standard Anaconda Python 3 distribution, this project necessitates the installation of the yfinance package, which can be installed using the following command:
 
-**Dependencies:** Apart from a standard Anaconda Python 3 installation, the project requires the following installations:
-
-``pip install matplotlib-venn``
+```
+!pip install yfinance
+```
