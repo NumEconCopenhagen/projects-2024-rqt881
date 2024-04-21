@@ -83,10 +83,6 @@ class DowJonesDataAnalyzer:
         print(mu_table)
         print("Ticker with max Sharpe ratio:", ticker_max_sharpe)
         print("Ticker with min Sharpe ratio:", ticker_min_sharpe)
-        
-        # Print the variance-covariance matrix
-        print("\nVariance-Covariance Matrix (Annualized):")
-        print(Sigma)
 
     
     def compute_efficient_frontier(self, mu, Sigma, simulated=False):
