@@ -2,8 +2,14 @@ import numpy as np
 import pandas as pd
 import yfinance as yf
 import matplotlib.pyplot as plt
+import ipywidgets as widgets
+from IPython.display import display
 
 class DowJonesDataAnalyzer:
+    """
+        A class to analyze financial data from the Dow Jones Index.
+        """
+    
     def __init__(self, start_date="2000-01-01", end_date="2023-12-01"):
         self.start_date = start_date
         self.end_date = end_date
@@ -15,6 +21,16 @@ class DowJonesDataAnalyzer:
         self.dow_prices = None
         self.excluded_tickers = []
         self.monthly_returns = None
+        self.mu = None
+        self.Sigma = None
+        self.ef_points_theoretical = None  # Explicitly initialize as None
+
+        # Initialize and compute everything in sequence
+        self.fetch_and_filter_dow_data()
+        self.calculate_metrics()
+        self.calculate_financial_metrics()
+        self.compute_efficient_frontier(self.mu, self.Sigma, simulated=False)
+
 
 
     def fetch_and_filter_dow_data(self):
@@ -145,3 +161,61 @@ class DowJonesDataAnalyzer:
         """    Simulates asset returns based on provided mean returns and covariance matrix."""
 
         return np.random.multivariate_normal(mean=expected_returns, cov=covariance_matrix, size=periods)
+
+
+
+class InteractivePlot:
+    """
+    A class to create and manage an interactive plot for visualizing efficient frontiers
+    based on varying periods and simulations.
+
+    Attributes:
+        analyzer (DowJonesDataAnalyzer): An instance of the DowJonesDataAnalyzer to access
+                                        financial data analysis methods.
+        periods_widget (widgets.IntSlider): Widget to select the number of periods.
+        simulations_widget (widgets.IntSlider): Widget to select the number of simulations.
+        output_dynamic (widgets.Output): Widget output for displaying dynamic plots.
+
+    Methods:
+        display(): Returns the layout of widgets arranged in the notebook.
+        update_plot(change): Updates and displays the plot according to the current widget settings.
+    """
+    def __init__(self, analyzer):
+        self.analyzer = analyzer
+        self.periods_widget = widgets.IntSlider(
+            value=50, min=50, max=10000, step=50, description='Periods:', continuous_update=False)
+        self.simulations_widget = widgets.IntSlider(
+            value=100, min=10, max=500, step=10, description='Simulations:', continuous_update=False)
+        self.output_dynamic = widgets.Output()
+
+        # Attach the update function to the widgets for real-time interaction
+        self.periods_widget.observe(self.update_plot, names='value')
+        self.simulations_widget.observe(self.update_plot, names='value')
+
+    def display(self):
+        """Returns a VBox widget containing the sliders and plot output for display."""
+        return widgets.VBox([widgets.HBox([self.periods_widget, self.simulations_widget]), self.output_dynamic])
+
+    def update_plot(self, change):
+        """Handles updates to the plot when widget values change, showing the impact of different simulations and periods."""
+        with self.output_dynamic:
+            self.output_dynamic.clear_output(wait=True)
+            num_periods = self.periods_widget.value
+            num_simulations = self.simulations_widget.value
+            fig_dynamic, ax_dynamic = plt.subplots(figsize=(7, 5))
+            # Plot the theoretical efficient frontier as a baseline
+            ax_dynamic.plot(self.analyzer.ef_points_theoretical['sd'], self.analyzer.ef_points_theoretical['mu'], color="black", linewidth=2, label='Theoretical Efficient Frontier')
+
+            # Generate and plot simulated data
+            for _ in range(num_simulations):
+                simulated_returns = self.analyzer.simulate_returns(num_periods, self.analyzer.mu, self.analyzer.Sigma)
+                sample_mu = np.mean(simulated_returns, axis=0)
+                sample_Sigma = np.cov(simulated_returns.T, ddof=0)
+                self.analyzer.compute_efficient_frontier(sample_mu, sample_Sigma, simulated=True)
+                ax_dynamic.plot(self.analyzer.ef_points_simulated['sd'], self.analyzer.ef_points_simulated['mu'], alpha=0.3, color="lightblue", label='Simulated' if _ == 0 else "")
+            
+            ax_dynamic.set_title(f'Simulated Efficient Frontier for {num_periods} Periods')
+            ax_dynamic.set_xlabel('Annualized Standard Deviation (%)')
+            ax_dynamic.set_ylabel('Annualized Expected Return (%)')
+            ax_dynamic.legend(loc='upper left')
+            plt.show()
